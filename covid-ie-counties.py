@@ -1,12 +1,15 @@
+import argparse
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# Variables
-county = "Cork"
-days = 90
+# Get command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--county", help="county name - default: Cork", default="Cork")
+parser.add_argument("--days", help="number of days to display data for - default: 30", type=int, default="30")
+args = parser.parse_args()
 
 # Get latest county date in csv format
 filename = 'covid-ie-counties.csv'
@@ -19,20 +22,20 @@ csv_file.close()
 df = pd.read_csv(filename)
 
 # Filter data by county and number of days
-df1 = df.loc[df['CountyName'] == county]
-df2 = df1.tail(days)
+df1 = df.loc[df['CountyName'] == args.county]
+df2 = df1.tail(args.days)
 
 # Bar Chart - Cumulative Confirmed Cases By County
 plt.bar(df2["TimeStamp"], df2["ConfirmedCovidCases"])
 
 plt.xlabel('Date')
 plt.ylabel('Total Cases')
-plt.title('Cumulative Confirmed Cases for ' + county + ' for last ' + str(days) + ' days')
+plt.title('Cumulative Confirmed Cases for ' + args.county + ' for last ' + str(args.days) + ' days')
 plt.show()
 
 # Bar Chart - New Confirmed Cases By County
 plt.bar(df2["TimeStamp"], df2["ConfirmedCovidCases"].diff())
 plt.xlabel('Date')
 plt.ylabel('Confirmed Cases')
-plt.title('New Confirmed Cases for ' + county + ' for last ' + str(days) + ' days')
+plt.title('New Confirmed Cases for ' + args.county + ' for last ' + str(args.days) + ' days')
 plt.show()
